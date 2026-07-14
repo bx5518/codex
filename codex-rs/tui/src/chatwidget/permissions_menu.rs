@@ -1,4 +1,6 @@
 use super::*;
+use super::permission_popups::localized_auto_review_description;
+use super::permission_popups::localized_permission_preset_description;
 use codex_protocol::models::BUILT_IN_PERMISSION_PROFILE_DANGER_FULL_ACCESS;
 
 impl ChatWidget {
