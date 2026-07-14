@@ -184,13 +184,13 @@ impl ChatWidget {
                     items: vec![
                         SelectionItem {
                             name: "No, don't archive".to_string(),
-                            description: Some("Return to the current session".to_string()),
+                            description: Some("返回当前会话".to_string()),
                             dismiss_on_select: true,
                             ..Default::default()
                         },
                         SelectionItem {
                             name: "Yes, archive and exit".to_string(),
-                            description: Some("Archive this session now".to_string()),
+                            description: Some("立即归档当前会话".to_string()),
                             actions: vec![Box::new(|tx| {
                                 tx.send(AppEvent::ArchiveCurrentThread);
                             })],
@@ -212,13 +212,13 @@ impl ChatWidget {
                     items: vec![
                         SelectionItem {
                             name: "No, keep this session".to_string(),
-                            description: Some("Return to the current session".to_string()),
+                            description: Some("返回当前会话".to_string()),
                             dismiss_on_select: true,
                             ..Default::default()
                         },
                         SelectionItem {
                             name: "Yes, delete and exit".to_string(),
-                            description: Some("Permanently delete this session now".to_string()),
+                            description: Some("立即永久删除当前会话".to_string()),
                             actions: vec![Box::new(|tx| {
                                 tx.send(AppEvent::DeleteCurrentThread);
                             })],

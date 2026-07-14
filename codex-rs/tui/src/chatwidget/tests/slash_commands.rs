@@ -31,7 +31,7 @@ fn fast_tier_command() -> ServiceTierCommand {
     ServiceTierCommand {
         id: ServiceTier::Fast.request_value().to_string(),
         name: "fast".to_string(),
-        description: "Fastest inference with increased plan usage".to_string(),
+        description: "启用更快的推理速度，但会增加套餐用量".to_string(),
     }
 }
 

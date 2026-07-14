@@ -8,7 +8,7 @@ impl ChatWidget {
 
         items.push(SelectionItem {
             name: "Review against a base branch".to_string(),
-            description: Some("(PR Style)".into()),
+            description: Some("（按拉取请求风格审查）".into()),
             actions: vec![Box::new({
                 let cwd = self.config.cwd.to_path_buf();
                 move |tx| {

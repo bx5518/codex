@@ -97,8 +97,7 @@ impl ChatWidget {
         let mut items: Vec<SelectionItem> = auto_presets
             .into_iter()
             .map(|preset| {
-                let description =
-                    (!preset.description.is_empty()).then_some(preset.description.clone());
+                let description = Some(format!("使用 {} 模型", preset.model));
                 let model = preset.model.clone();
                 let requires_advanced_selection =
                     Self::is_advanced_reasoning_effort(&preset.default_reasoning_effort)
@@ -147,9 +146,7 @@ impl ChatWidget {
             })];
 
             let is_current = !items.iter().any(|item| item.is_current);
-            let description = Some(format!(
-                "Choose a specific model and reasoning level (current: {current_label})"
-            ));
+            let description = Some(format!("选择指定模型和推理强度（当前：{current_label}）"));
 
             items.push(SelectionItem {
                 name: "All models".to_string(),
@@ -197,8 +194,7 @@ impl ChatWidget {
 
         let mut items: Vec<SelectionItem> = Vec::new();
         for preset in presets.into_iter() {
-            let description =
-                (!preset.description.is_empty()).then_some(preset.description.to_string());
+            let description = Some(format!("使用 {} 模型", preset.model));
             let is_current = preset.model.as_str() == self.current_model();
             let single_supported_effort = preset.supported_reasoning_efforts.len() == 1;
             let preset_for_action = preset.clone();
@@ -294,21 +290,18 @@ impl ChatWidget {
         effort: Option<ReasoningEffortConfig>,
     ) {
         let reasoning_phrase = match effort.as_ref() {
-            Some(ReasoningEffortConfig::None) => "no reasoning".to_string(),
+            Some(ReasoningEffortConfig::None) => "不进行额外推理".to_string(),
             Some(selected_effort) => {
-                format!(
-                    "{} reasoning",
-                    Self::reasoning_effort_sentence_label(selected_effort)
-                )
+                format!("使用“{}”推理强度", Self::reasoning_effort_label(selected_effort))
             }
-            None => "the selected reasoning".to_string(),
+            None => "使用所选推理强度".to_string(),
         };
-        let plan_only_description = format!("Always use {reasoning_phrase} in Plan mode.");
+        let plan_only_description = format!("仅在计划模式中始终{reasoning_phrase}");
         let plan_reasoning_source = if let Some(plan_override) =
             self.config.plan_mode_reasoning_effort.as_ref()
         {
             format!(
-                "user-chosen Plan override ({})",
+                "用户选择的计划模式覆盖值（{}）",
                 Self::reasoning_effort_sentence_label(plan_override)
             )
         } else if let Some(plan_mask) = collaboration_modes::plan_mask(self.model_catalog.as_ref())
@@ -319,17 +312,16 @@ impl ChatWidget {
                 .and_then(|effort| effort.as_ref())
             {
                 Some(plan_effort) => format!(
-                    "built-in Plan default ({})",
+                    "内置计划模式默认值（{}）",
                     Self::reasoning_effort_sentence_label(plan_effort)
                 ),
-                None => "built-in Plan default (no reasoning)".to_string(),
+                None => "内置计划模式默认值（不进行额外推理）".to_string(),
             }
         } else {
-            "built-in Plan default".to_string()
+            "内置计划模式默认值".to_string()
         };
-        let all_modes_description = format!(
-            "Set the global default reasoning level and the Plan mode override. This replaces the current {plan_reasoning_source}."
-        );
+        let all_modes_description =
+            format!("设置全局默认推理强度和计划模式覆盖值，并替换当前设置：{plan_reasoning_source}");
         let subtitle = format!("Choose where to apply {reasoning_phrase}.");
         let warning = effort
             .as_ref()
@@ -482,11 +474,7 @@ impl ChatWidget {
                 effort_label.push_str(" (default)");
             }
 
-            let description = supported
-                .iter()
-                .find(|option| option.effort == effort)
-                .map(|option| option.description.to_string())
-                .filter(|text| !text.is_empty());
+            let description = Some(Self::reasoning_effort_description(&effort).to_string());
 
             let show_warning = warn_for_model && warn_effort.as_ref() == Some(&effort);
             let selected_description = if show_warning {
@@ -528,11 +516,6 @@ impl ChatWidget {
                 .map(Self::reasoning_effort_label)
                 .collect::<Vec<_>>()
                 .join(" and ");
-            let verb = if advanced_choices.len() == 1 {
-                "consumes"
-            } else {
-                "consume"
-            };
             let preset_for_action = preset;
             let actions: Vec<SelectionAction> = vec![Box::new(move |tx| {
                 tx.send(AppEvent::OpenAdvancedReasoningPopup {
@@ -541,7 +524,7 @@ impl ChatWidget {
             })];
             items.push(SelectionItem {
                 name: "More reasoning…".to_string(),
-                description: Some(format!("{advanced_label} {verb} usage limits faster")),
+                description: Some(format!("{advanced_label} 会更快消耗用量限制")),
                 is_current: is_current_model
                     && highlight_choice
                         .as_ref()
@@ -593,10 +576,10 @@ impl ChatWidget {
         for effort in choices {
             let description = match &effort {
                 ReasoningEffortConfig::Max => {
-                    "For difficult problems when quality matters more than speed · higher usage"
+                    "适合质量比速度更重要的困难问题 · 用量较高"
                 }
                 ReasoningEffortConfig::Ultra => {
-                    "For demanding work using multiple agents · highest usage"
+                    "适合需要多个智能体的高难度工作 · 用量最高"
                 }
                 _ => unreachable!("advanced choices are limited to Max and Ultra"),
             };
@@ -647,6 +630,20 @@ impl ChatWidget {
             ReasoningEffortConfig::Max => "Max".to_string(),
             ReasoningEffortConfig::Ultra => "Ultra".to_string(),
             ReasoningEffortConfig::Custom(value) => value.clone(),
+        }
+    }
+
+    fn reasoning_effort_description(effort: &ReasoningEffortConfig) -> &'static str {
+        match effort {
+            ReasoningEffortConfig::None => "不进行额外推理，响应速度最快",
+            ReasoningEffortConfig::Minimal => "使用最少的推理，优先提高响应速度",
+            ReasoningEffortConfig::Low => "使用较少的推理，兼顾速度和质量",
+            ReasoningEffortConfig::Medium => "使用均衡的推理强度",
+            ReasoningEffortConfig::High => "使用较高的推理强度，提高复杂任务质量",
+            ReasoningEffortConfig::XHigh => "使用很高的推理强度，适合更复杂的问题",
+            ReasoningEffortConfig::Max => "使用最大推理强度，用量较高",
+            ReasoningEffortConfig::Ultra => "使用多个智能体进行最高强度推理，用量最高",
+            ReasoningEffortConfig::Custom(_) => "使用自定义推理强度",
         }
     }
 

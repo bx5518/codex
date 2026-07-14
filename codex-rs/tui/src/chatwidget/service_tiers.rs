@@ -92,10 +92,14 @@ impl ChatWidget {
                         preset
                             .service_tiers
                             .into_iter()
-                            .map(|tier| ServiceTierCommand {
-                                id: tier.id,
-                                name: tier.name.to_lowercase(),
-                                description: tier.description,
+                            .map(|tier| {
+                                let name = tier.name.to_lowercase();
+                                let description = localized_service_tier_description(&name);
+                                ServiceTierCommand {
+                                    id: tier.id,
+                                    name,
+                                    description,
+                                }
                             })
                             .collect()
                     })
@@ -154,5 +158,13 @@ impl ChatWidget {
             self.current_model(),
             &self.model_catalog.try_list_models().unwrap_or_default(),
         );
+    }
+}
+
+fn localized_service_tier_description(name: &str) -> String {
+    if name.eq_ignore_ascii_case(SPEED_TIER_FAST) {
+        "启用更快的推理速度，但会增加套餐用量".to_string()
+    } else {
+        format!("切换到“{name}”模型服务档位")
     }
 }

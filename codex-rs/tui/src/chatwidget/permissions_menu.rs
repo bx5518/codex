@@ -31,9 +31,7 @@ impl ChatWidget {
             self.builtin_permission_mode_selection_item(
                 default,
                 ":workspace",
-                default
-                    .description
-                    .replace(" (Identical to Agent mode)", ""),
+                localized_permission_preset_description(default.id),
                 AskForApproval::from(default.approval),
                 ApprovalsReviewer::User,
             ),
@@ -42,7 +40,7 @@ impl ChatWidget {
             items.push(self.builtin_permission_mode_selection_item(
                 default,
                 ":workspace",
-                AUTO_REVIEW_DESCRIPTION.to_string(),
+                localized_auto_review_description(),
                 AskForApproval::OnRequest,
                 ApprovalsReviewer::AutoReview,
             ));
@@ -50,14 +48,14 @@ impl ChatWidget {
         items.push(self.builtin_permission_mode_selection_item(
             full_access,
             BUILT_IN_PERMISSION_PROFILE_DANGER_FULL_ACCESS,
-            full_access.description.to_string(),
+            localized_permission_preset_description(full_access.id),
             AskForApproval::from(full_access.approval),
             ApprovalsReviewer::User,
         ));
         items.push(self.builtin_permission_mode_selection_item(
             read_only,
             ":read-only",
-            read_only.description.to_string(),
+            localized_permission_preset_description(read_only.id),
             AskForApproval::from(read_only.approval),
             ApprovalsReviewer::User,
         ));

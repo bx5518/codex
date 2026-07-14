@@ -32,14 +32,11 @@ impl ChatWidget {
             match (reset_eligible, self.available_rate_limit_reset_credits) {
                 (true, Some(available_count)) if available_count > 0 => (
                     true,
-                    format!(
-                        "You have {available_count} {} available.",
-                        reset_label(available_count)
-                    ),
+                    format!("你有 {available_count} 次用量限制重置可用。"),
                 ),
-                (true, None) => (true, "Check reset availability.".to_string()),
+                (true, None) => (true, "检查是否有可用的用量限制重置。".to_string()),
                 (true, Some(_)) | (false, _) => {
-                    (false, "No usage limit resets available.".to_string())
+                    (false, "没有可用的用量限制重置。".to_string())
                 }
             };
         SelectionViewParams {
@@ -50,7 +47,7 @@ impl ChatWidget {
             items: vec![
                 SelectionItem {
                     name: "Show usage".to_string(),
-                    description: Some("View recent account token usage.".to_string()),
+                    description: Some("查看账户最近的令牌用量。".to_string()),
                     actions: vec![Box::new(|tx| {
                         tx.send(AppEvent::OpenTokenActivity);
                     })],
@@ -174,7 +171,7 @@ impl ChatWidget {
                     let credit_id = option.credit_id;
                     SelectionItem {
                         name: option.name,
-                        description: Some(option.description),
+                        description: Some("使用此重置额度恢复可用量。".to_string()),
                         actions: vec![Box::new(move |tx| {
                             tx.send(AppEvent::ConsumeRateLimitResetCredit {
                                 idempotency_key: idempotency_key.clone(),

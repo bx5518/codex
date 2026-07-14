@@ -123,9 +123,9 @@ impl ChatWidget {
 
     fn personality_description(personality: Personality) -> &'static str {
         match personality {
-            Personality::None => "No personality instructions.",
-            Personality::Friendly => "Warm, collaborative, and helpful.",
-            Personality::Pragmatic => "Concise, task-focused, and direct.",
+            Personality::None => "不使用个性化沟通说明",
+            Personality::Friendly => "温和、协作并乐于提供帮助",
+            Personality::Pragmatic => "简洁、专注任务并直截了当",
         }
     }
 }

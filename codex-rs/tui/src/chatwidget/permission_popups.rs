@@ -60,8 +60,7 @@ impl ChatWidget {
             } else {
                 preset.label.to_string()
             };
-            let base_description =
-                Some(preset.description.replace(" (Identical to Agent mode)", ""));
+            let base_description = Some(localized_permission_preset_description(preset.id));
             let approval_disabled_reason = match self
                 .config
                 .permissions
@@ -101,7 +100,7 @@ impl ChatWidget {
                 if guardian_approval_enabled {
                     items.push(SelectionItem {
                         name: APPROVE_FOR_ME_LABEL.to_string(),
-                        description: Some(AUTO_REVIEW_DESCRIPTION.to_string()),
+                        description: Some(localized_auto_review_description()),
                         is_current: current_review_policy == ApprovalsReviewer::AutoReview
                             && Self::preset_matches_current(
                                 current_approval,
@@ -498,4 +497,17 @@ impl ChatWidget {
             ..Default::default()
         });
     }
+}
+
+pub(super) fn localized_permission_preset_description(id: &str) -> String {
+    match id {
+        "auto" => "允许读取和修改当前工作区；需要时向你申请额外权限".to_string(),
+        "read-only" => "仅允许读取文件；修改文件或执行受限操作前需要批准".to_string(),
+        "full-access" => "允许访问所有文件并使用网络，不再逐项请求批准".to_string(),
+        _ => "使用此权限配置运行 Codex".to_string(),
+    }
+}
+
+pub(super) fn localized_auto_review_description() -> String {
+    "由自动审查器评估并批准安全的操作，必要时再请求你的确认".to_string()
 }
