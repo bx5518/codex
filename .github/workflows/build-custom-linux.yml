@@ -90,6 +90,9 @@ jobs:
           --target "${TARGET}"
           --bin codex
 
+      - name: Strip Codex CLI
+        run: strip --strip-debug --strip-unneeded "target/${TARGET}/release/codex"
+
       - name: Verify executable
         run: |
           file "target/${TARGET}/release/codex"
