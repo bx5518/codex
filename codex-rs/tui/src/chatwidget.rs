@@ -1058,7 +1058,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: MULTI_AGENT_ENABLE_NO.to_string(),
-                description: Some("Keep subagents disabled.".to_string()),
+                description: Some("保持子智能体禁用。".to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },
@@ -1105,7 +1105,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: MEMORIES_ENABLE_NO.to_string(),
-                description: Some("Keep memories disabled.".to_string()),
+                description: Some("保持记忆功能禁用。".to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },

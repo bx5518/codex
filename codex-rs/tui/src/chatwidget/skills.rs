@@ -52,7 +52,7 @@ impl ChatWidget {
             },
             SelectionItem {
                 name: "Enable/Disable Skills".to_string(),
-                description: Some("Enable or disable skills.".to_string()),
+                description: Some("启用或禁用技能。".to_string()),
                 actions: vec![Box::new(|tx| {
                     tx.send(AppEvent::OpenManageSkillsPopup);
                 })],

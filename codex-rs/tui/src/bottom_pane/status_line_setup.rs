@@ -148,51 +148,51 @@ impl StatusLineItem {
     /// User-visible description shown in the popup.
     pub(crate) fn description(self) -> &'static str {
         match self {
-            StatusLineItem::ModelName => "Current model name",
-            StatusLineItem::ModelWithReasoning => "Current model name with reasoning level",
-            StatusLineItem::Reasoning => "Current reasoning level",
-            StatusLineItem::CurrentDir => "Current working directory",
-            StatusLineItem::ProjectRoot => "Project name (omitted when unavailable)",
-            StatusLineItem::GitBranch => "Current Git branch (omitted when unavailable)",
+            StatusLineItem::ModelName => "当前模型名称",
+            StatusLineItem::ModelWithReasoning => "当前模型名称和推理强度",
+            StatusLineItem::Reasoning => "当前推理强度",
+            StatusLineItem::CurrentDir => "当前工作目录",
+            StatusLineItem::ProjectRoot => "项目名称（不可用时省略）",
+            StatusLineItem::GitBranch => "当前 Git 分支（不可用时省略）",
             StatusLineItem::PullRequestNumber => {
-                "Open pull request number for the current branch (omitted when unavailable)"
+                "当前分支的开放拉取请求编号（不可用时省略）"
             }
             StatusLineItem::BranchChanges => {
-                "Committed branch changes against the default branch (omitted when unavailable)"
+                "相对于默认分支的已提交变更（不可用时省略）"
             }
-            StatusLineItem::Status => "Compact session run-state text (Ready, Working, Thinking)",
-            StatusLineItem::Permissions => "Active permission profile or sandbox mode",
-            StatusLineItem::ApprovalMode => "Active command approval mode",
+            StatusLineItem::Status => "简洁的会话运行状态（就绪、工作中、思考中）",
+            StatusLineItem::Permissions => "当前权限配置或沙箱模式",
+            StatusLineItem::ApprovalMode => "当前命令审批模式",
             StatusLineItem::ContextRemaining => {
-                "Percentage of context window remaining (omitted when unknown)"
+                "上下文窗口剩余百分比（未知时省略）"
             }
             StatusLineItem::ContextUsed => {
-                "Percentage of context window used (omitted when unknown)"
+                "上下文窗口已用百分比（未知时省略）"
             }
             StatusLineItem::FiveHourLimit => {
-                "Remaining usage on the primary usage limit (omitted when unavailable)"
+                "主要用量限制的剩余额度（不可用时省略）"
             }
             StatusLineItem::WeeklyLimit => {
-                "Remaining usage on the secondary usage limit (omitted when unavailable)"
+                "次要用量限制的剩余额度（不可用时省略）"
             }
-            StatusLineItem::CodexVersion => "Codex application version",
+            StatusLineItem::CodexVersion => "Codex 应用版本",
             StatusLineItem::ContextWindowSize => {
-                "Total context window size in tokens (omitted when unknown)"
+                "上下文窗口的总令牌数（未知时省略）"
             }
-            StatusLineItem::UsedTokens => "Total tokens used in session (omitted when zero)",
-            StatusLineItem::TotalInputTokens => "Total input tokens used in session",
-            StatusLineItem::TotalOutputTokens => "Total output tokens used in session",
-            StatusLineItem::SessionId => "Current thread identifier (omitted until thread starts)",
-            StatusLineItem::FastMode => "Whether Fast mode is currently active",
-            StatusLineItem::RawOutput => "Whether raw scrollback mode is active",
+            StatusLineItem::UsedTokens => "会话已用令牌总数（为零时省略）",
+            StatusLineItem::TotalInputTokens => "会话已用输入令牌总数",
+            StatusLineItem::TotalOutputTokens => "会话已用输出令牌总数",
+            StatusLineItem::SessionId => "当前任务标识符（任务开始前省略）",
+            StatusLineItem::FastMode => "快速模式当前是否启用",
+            StatusLineItem::RawOutput => "原始回滚模式当前是否启用",
             StatusLineItem::ThreadTitle => {
-                "Current thread title, or thread identifier when unnamed"
+                "当前任务标题；未命名时显示任务标识符"
             }
             StatusLineItem::WorkspaceHeadline => {
-                "Workspace notification headline (Enterprise workspaces only; omitted when unavailable)"
+                "工作区通知标题（仅限企业工作区；不可用时省略）"
             }
             StatusLineItem::TaskProgress => {
-                "Latest task progress from update_plan (omitted until available)"
+                "update_plan 提供的最新任务进度（可用前省略）"
             }
         }
     }
@@ -264,8 +264,8 @@ impl StatusLineSetupView {
         let mut used_ids = HashSet::new();
         let mut items = vec![MultiSelectItem {
             id: STATUS_LINE_USE_THEME_COLORS_ITEM_ID.to_string(),
-            name: "Use theme colors".to_string(),
-            description: Some("Apply colors from the active /theme".to_string()),
+            name: "使用主题颜色".to_string(),
+            description: Some("应用当前 /theme 的颜色".to_string()),
             enabled: use_theme_colors,
             orderable: false,
             section_break_after: true,
@@ -302,8 +302,8 @@ impl StatusLineSetupView {
 
         Self {
             picker: MultiSelectPicker::builder(
-                "Configure Status Line".to_string(),
-                Some("Select which items to display in the status line.".to_string()),
+                "配置状态栏".to_string(),
+                Some("选择要在状态栏中显示的项目。".to_string()),
                 app_event_tx,
             )
             .list_keymap(list_keymap)

@@ -173,7 +173,7 @@ impl ChatWidget {
 
         let mut items = vec![SelectionItem {
             name: "Command".to_string(),
-            description: Some("Rationale".to_string()),
+            description: Some("原因".to_string()),
             is_disabled: true,
             search_value: Some(String::new()),
             ..Default::default()
@@ -469,21 +469,21 @@ impl ChatWidget {
         let items = vec![
             SelectionItem {
                 name: "Yes, continue anyway".to_string(),
-                description: Some("Apply full access for this session".to_string()),
+                description: Some("仅在本次会话中应用完全访问权限".to_string()),
                 actions: accept_actions,
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
                 name: "Yes, and don't ask again".to_string(),
-                description: Some("Enable full access and remember this choice".to_string()),
+                description: Some("启用完全访问权限并记住此选择".to_string()),
                 actions: accept_and_remember_actions,
                 dismiss_on_select: true,
                 ..Default::default()
             },
             SelectionItem {
                 name: "Cancel".to_string(),
-                description: Some("Go back without enabling full access".to_string()),
+                description: Some("返回且不启用完全访问权限".to_string()),
                 actions: deny_actions,
                 dismiss_on_select: true,
                 ..Default::default()

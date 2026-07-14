@@ -55,14 +55,14 @@ impl ChatWidget {
             items: vec![
                 SelectionItem {
                     name: "Resume goal".to_string(),
-                    description: Some("Mark it active and continue when idle".to_string()),
+                    description: Some("将其标记为活动，并在空闲时继续".to_string()),
                     actions: resume_actions,
                     dismiss_on_select: true,
                     ..Default::default()
                 },
                 SelectionItem {
                     name: "Leave paused".to_string(),
-                    description: Some("Keep it paused; use /goal resume later".to_string()),
+                    description: Some("保持暂停；稍后使用 /goal resume 恢复".to_string()),
                     dismiss_on_select: true,
                     ..Default::default()
                 },

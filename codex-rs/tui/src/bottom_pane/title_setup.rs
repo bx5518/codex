@@ -91,42 +91,42 @@ pub(crate) enum TerminalTitleItem {
 impl TerminalTitleItem {
     pub(crate) fn description(self) -> &'static str {
         match self {
-            TerminalTitleItem::AppName => "Codex app name",
-            TerminalTitleItem::Project => "Project name (falls back to current directory name)",
-            TerminalTitleItem::CurrentDir => "Current working directory",
+            TerminalTitleItem::AppName => "Codex 应用名称",
+            TerminalTitleItem::Project => "项目名称（不可用时使用当前目录名称）",
+            TerminalTitleItem::CurrentDir => "当前工作目录",
             TerminalTitleItem::Spinner => {
-                "Spinner while working, action-required message while blocked."
+                "工作时显示旋转指示器，受阻时显示需要操作的消息"
             }
             TerminalTitleItem::Status => {
-                "Compact session run-state text (Ready, Working, Thinking)"
+                "简洁的会话运行状态（就绪、工作中、思考中）"
             }
-            TerminalTitleItem::Thread => "Current thread title, or thread identifier when unnamed",
-            TerminalTitleItem::GitBranch => "Current Git branch (omitted when unavailable)",
+            TerminalTitleItem::Thread => "当前任务标题；未命名时显示任务标识符",
+            TerminalTitleItem::GitBranch => "当前 Git 分支（不可用时省略）",
             TerminalTitleItem::ContextRemaining => {
-                "Percentage of context window remaining (omitted when unknown)"
+                "上下文窗口剩余百分比（未知时省略）"
             }
             TerminalTitleItem::ContextUsed => {
-                "Percentage of context window used (omitted when unknown)"
+                "上下文窗口已用百分比（未知时省略）"
             }
             TerminalTitleItem::FiveHourLimit => {
-                "Remaining usage on the primary usage limit (omitted when unavailable)"
+                "主要用量限制的剩余额度（不可用时省略）"
             }
             TerminalTitleItem::WeeklyLimit => {
-                "Remaining usage on the secondary usage limit (omitted when unavailable)"
+                "次要用量限制的剩余额度（不可用时省略）"
             }
-            TerminalTitleItem::CodexVersion => "Codex application version",
-            TerminalTitleItem::UsedTokens => "Total tokens used in session (omitted when zero)",
-            TerminalTitleItem::TotalInputTokens => "Total input tokens used in session",
-            TerminalTitleItem::TotalOutputTokens => "Total output tokens used in session",
+            TerminalTitleItem::CodexVersion => "Codex 应用版本",
+            TerminalTitleItem::UsedTokens => "会话已用令牌总数（为零时省略）",
+            TerminalTitleItem::TotalInputTokens => "会话已用输入令牌总数",
+            TerminalTitleItem::TotalOutputTokens => "会话已用输出令牌总数",
             TerminalTitleItem::SessionId => {
-                "Current thread identifier (omitted until thread starts)"
+                "当前任务标识符（任务开始前省略）"
             }
-            TerminalTitleItem::FastMode => "Whether Fast mode is currently active",
-            TerminalTitleItem::Model => "Current model name",
-            TerminalTitleItem::ModelWithReasoning => "Current model name with reasoning level",
-            TerminalTitleItem::Reasoning => "Current reasoning level",
+            TerminalTitleItem::FastMode => "快速模式当前是否启用",
+            TerminalTitleItem::Model => "当前模型名称",
+            TerminalTitleItem::ModelWithReasoning => "当前模型名称和推理强度",
+            TerminalTitleItem::Reasoning => "当前推理强度",
             TerminalTitleItem::TaskProgress => {
-                "Latest task progress from update_plan (omitted until available)"
+                "update_plan 提供的最新任务进度（可用前省略）"
             }
         }
     }
@@ -275,8 +275,8 @@ impl TerminalTitleSetupView {
 
         Self {
             picker: MultiSelectPicker::builder(
-                "Configure Terminal Title".to_string(),
-                Some("Select which items to display in the terminal title.".to_string()),
+                "配置终端标题".to_string(),
+                Some("选择要在终端标题中显示的项目。".to_string()),
                 app_event_tx,
             )
             .list_keymap(list_keymap)

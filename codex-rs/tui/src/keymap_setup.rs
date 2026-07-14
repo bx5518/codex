@@ -231,7 +231,7 @@ pub(crate) fn build_keymap_action_menu_params(
             let replace_one_action = action.clone();
             items.push(SelectionItem {
                 name: "Replace one binding...".to_string(),
-                description: Some("Choose which existing binding to replace.".to_string()),
+                description: Some("选择要替换的现有按键绑定。".to_string()),
                 selected_description: Some(
                     "Pick one current binding, then capture its replacement.".to_string(),
                 ),
@@ -282,7 +282,7 @@ pub(crate) fn build_keymap_action_menu_params(
     });
     items.push(SelectionItem {
         name: "Back to shortcuts".to_string(),
-        description: Some("Return to the shortcut list.".to_string()),
+        description: Some("返回快捷键列表。".to_string()),
         dismiss_on_select: true,
         ..Default::default()
     });
@@ -326,7 +326,7 @@ pub(crate) fn build_keymap_replace_binding_menu_params(
             let old_key = binding.clone();
             SelectionItem {
                 name: binding.clone(),
-                description: Some("Replace this binding.".to_string()),
+                description: Some("替换此按键绑定。".to_string()),
                 selected_description: Some(format!("Capture a new key to replace `{binding}`.")),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenKeymapCapture {
@@ -371,7 +371,7 @@ pub(crate) fn build_keymap_conflict_params(
         items: vec![
             SelectionItem {
                 name: "Pick another key".to_string(),
-                description: Some("Return to key capture for this action.".to_string()),
+                description: Some("返回此操作的按键捕获。".to_string()),
                 actions: vec![Box::new(move |tx| {
                     tx.send(AppEvent::OpenKeymapCapture {
                         context: retry_context.clone(),
@@ -384,7 +384,7 @@ pub(crate) fn build_keymap_conflict_params(
             },
             SelectionItem {
                 name: "Cancel".to_string(),
-                description: Some("Leave keymap unchanged.".to_string()),
+                description: Some("不更改快捷键映射。".to_string()),
                 dismiss_on_select: true,
                 ..Default::default()
             },
