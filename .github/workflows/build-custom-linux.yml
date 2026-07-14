@@ -1,0 +1,115 @@
+name: Build customized Codex for Linux
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "codex-rs/**"
+      - ".github/actions/setup-rusty-v8/**"
+      - ".github/scripts/install-musl-build-tools.sh"
+      - ".github/workflows/build-custom-linux.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  build-linux-x64:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+
+    defaults:
+      run:
+        working-directory: codex-rs
+
+    env:
+      CARGO_NET_GIT_FETCH_WITH_CLI: "true"
+      CARGO_PROFILE_RELEASE_LTO: "false"
+      CARGO_PROFILE_RELEASE_SPLIT_DEBUGINFO: "off"
+      TARGET: x86_64-unknown-linux-musl
+
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+
+      - name: Install Linux build dependencies
+        run: |
+          sudo apt-get update -y
+          sudo DEBIAN_FRONTEND=noninteractive apt-get install -y \
+            --no-install-recommends \
+            binutils \
+            libcap-dev \
+            pkg-config
+
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: x86_64-unknown-linux-musl
+
+      - name: Use hermetic Cargo home
+        run: |
+          cargo_home="${GITHUB_WORKSPACE}/.cargo-home"
+          mkdir -p "${cargo_home}/bin"
+          echo "CARGO_HOME=${cargo_home}" >> "$GITHUB_ENV"
+          echo "${cargo_home}/bin" >> "$GITHUB_PATH"
+          : > "${cargo_home}/config.toml"
+
+      - name: Install Zig
+        uses: mlugg/setup-zig@v2
+        with:
+          version: 0.14.0
+          use-cache: false
+
+      - name: Install musl build tools
+        run: bash "${GITHUB_WORKSPACE}/.github/scripts/install-musl-build-tools.sh"
+
+      - name: Disable aws-lc jitter entropy
+        run: |
+          echo "AWS_LC_SYS_NO_JITTER_ENTROPY=1" >> "$GITHUB_ENV"
+          echo "AWS_LC_SYS_NO_JITTER_ENTROPY_x86_64_unknown_linux_musl=1" >> "$GITHUB_ENV"
+
+      - name: Configure rusty_v8 artifacts
+        uses: ./.github/actions/setup-rusty-v8
+        with:
+          target: x86_64-unknown-linux-musl
+
+      - name: Build bwrap and export digest
+        run: |
+          cargo build --locked --release --target "${TARGET}" --bin bwrap
+          bwrap_path="target/${TARGET}/release/bwrap"
+          strip --strip-debug --strip-unneeded "${bwrap_path}"
+          digest="$(sha256sum "${bwrap_path}" | awk '{print $1}')"
+          echo "CODEX_BWRAP_SHA256=${digest}" >> "$GITHUB_ENV"
+
+      - name: Build Codex CLI
+        run: >-
+          cargo build
+          --locked
+          --release
+          --target "${TARGET}"
+          --bin codex
+
+      - name: Verify executable
+        run: |
+          file "target/${TARGET}/release/codex"
+          "target/${TARGET}/release/codex" --version
+
+      - name: Package executable
+        run: |
+          package_root="${RUNNER_TEMP}/codex-linux-x64-custom"
+          mkdir -p "${package_root}/codex-resources"
+          cp "target/${TARGET}/release/codex" "${package_root}/codex"
+          cp "target/${TARGET}/release/bwrap" "${package_root}/codex-resources/bwrap"
+          chmod 0755 "${package_root}/codex" "${package_root}/codex-resources/bwrap"
+          tar -C "${RUNNER_TEMP}" -czf \
+            "${GITHUB_WORKSPACE}/codex-linux-x64-custom.tar.gz" \
+            codex-linux-x64-custom
+
+      - name: Upload executable
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-linux-x64-custom
+          path: codex-linux-x64-custom.tar.gz
+          if-no-files-found: error
+          retention-days: 14
