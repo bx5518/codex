@@ -3,7 +3,7 @@ use dirs::home_dir;
 
 /// Returns the path to the Codex DIY configuration directory.
 ///
-/// This build intentionally uses only `~/.codexdiy` so it can coexist with an
+/// This build intentionally uses only `~/.codexdiy1` so it can coexist with an
 /// official Codex installation without reading or writing the official
 /// `~/.codex` directory.
 pub fn find_codex_home() -> std::io::Result<AbsolutePathBuf> {
@@ -13,7 +13,7 @@ pub fn find_codex_home() -> std::io::Result<AbsolutePathBuf> {
             "Could not find home directory",
         )
     })?;
-    path.push(".codexdiy");
+    path.push(".codexdiy1");
     AbsolutePathBuf::from_absolute_path(path)
 }
 
@@ -28,7 +28,7 @@ mod tests {
     fn find_codex_home_uses_diy_home_dir() {
         let resolved = find_codex_home().expect("Codex DIY home");
         let mut expected = home_dir().expect("home dir");
-        expected.push(".codexdiy");
+        expected.push(".codexdiy1");
         let expected = AbsolutePathBuf::from_absolute_path(expected).expect("absolute home");
         assert_eq!(resolved, expected);
     }
