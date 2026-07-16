@@ -1,35 +1,32 @@
 use codex_utils_absolute_path::AbsolutePathBuf;
-use dirs::home_dir;
 
 /// Returns the path to the Codex DIY configuration directory.
 ///
-/// This build intentionally uses only `~/.codexdiy1` so it can coexist with an
-/// official Codex installation without reading or writing the official
-/// `~/.codex` directory.
+/// This build resolves the configuration root to the directory that contains
+/// the currently running executable.
 pub fn find_codex_home() -> std::io::Result<AbsolutePathBuf> {
-    let mut path = home_dir().ok_or_else(|| {
-        std::io::Error::new(
-            std::io::ErrorKind::NotFound,
-            "Could not find home directory",
-        )
-    })?;
-    path.push(".codexdiy1");
-    AbsolutePathBuf::from_absolute_path(path)
+    let exe_path = std::env::current_exe()?;
+    let exe_dir = exe_path
+        .parent()
+        .ok_or_else(|| std::io::Error::other("Could not determine executable directory"))?;
+    AbsolutePathBuf::from_absolute_path(exe_dir.to_path_buf())
 }
 
 #[cfg(test)]
 mod tests {
     use super::find_codex_home;
     use codex_utils_absolute_path::AbsolutePathBuf;
-    use dirs::home_dir;
     use pretty_assertions::assert_eq;
 
     #[test]
-    fn find_codex_home_uses_diy_home_dir() {
+    fn find_codex_home_uses_current_exe_directory() {
         let resolved = find_codex_home().expect("Codex DIY home");
-        let mut expected = home_dir().expect("home dir");
-        expected.push(".codexdiy1");
-        let expected = AbsolutePathBuf::from_absolute_path(expected).expect("absolute home");
+        let expected = std::env::current_exe()
+            .expect("current exe")
+            .parent()
+            .expect("exe dir")
+            .to_path_buf();
+        let expected = AbsolutePathBuf::from_absolute_path(expected).expect("absolute exe dir");
         assert_eq!(resolved, expected);
     }
 }
