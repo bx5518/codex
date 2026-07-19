@@ -375,6 +375,22 @@ async fn thread_settings_updated_updates_visible_state_without_transcript() {
 }
 
 #[tokio::test]
+async fn replayed_thread_settings_do_not_override_visible_state() {
+    let (mut chat, mut rx, _op_rx) = make_chatwidget_manual(Some("gpt-5.2")).await;
+    let thread_id = ThreadId::new();
+    chat.handle_thread_session(configured_thread_session(thread_id));
+    let _ = drain_insert_history(&mut rx);
+
+    chat.set_model("gpt-5.5");
+    chat.handle_server_notification(
+        ServerNotification::ThreadSettingsUpdated(thread_settings_for_test("gpt-5.6", thread_id)),
+        Some(ReplayKind::ThreadSnapshot),
+    );
+
+    assert_eq!(chat.current_model(), "gpt-5.5");
+}
+
+#[tokio::test]
 async fn thread_settings_updated_preserves_default_settings_for_plan_mode() {
     let (mut chat, mut rx, _op_rx) = make_chatwidget_manual(Some("gpt-5.2")).await;
     let thread_id = ThreadId::new();

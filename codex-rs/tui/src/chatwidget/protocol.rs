@@ -54,9 +54,10 @@ impl ChatWidget {
             ServerNotification::ThreadGoalCleared(notification) => {
                 self.on_thread_goal_cleared(notification.thread_id.as_str());
             }
-            ServerNotification::ThreadSettingsUpdated(notification) => {
+            ServerNotification::ThreadSettingsUpdated(notification) if !from_replay => {
                 self.on_thread_settings_updated(notification);
             }
+            ServerNotification::ThreadSettingsUpdated(_) => {}
             ServerNotification::TurnStarted(notification) => {
                 self.turn_lifecycle.last_turn_id = Some(notification.turn.id);
                 self.last_non_retry_error = None;
